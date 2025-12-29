@@ -1,4 +1,4 @@
-use std::{env, fs, process};
+use std::{env, error::Error, fs, process};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -13,11 +13,12 @@ fn main() {
     run(cfg);
 }
 
-fn run(cfg: Config) {
-    let contents =
-        fs::read_to_string(cfg.file_path).expect("Should have been able to read the file");
+fn run(cfg: Config) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(cfg.file_path)?;
 
     println!("With text:\n{contents}");
+
+    Ok(())
 }
 
 struct Config {
