@@ -1,4 +1,4 @@
-use minigrep::search;
+use minigrep::{search, search_case_insensitive};
 use std::{env, error::Error, fs, process};
 
 fn main() {
@@ -17,7 +17,13 @@ fn main() {
 fn run(cfg: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(cfg.file_path)?;
 
-    for line in search(&cfg.query, &contents) {
+    let res = if cfg.ignore_case {
+        search_case_insensitive(&cfg.query, &contents)
+    } else {
+        search(&cfg.query, &contents)
+    };
+
+    for line in res {
         println!("{line}");
     }
 
@@ -27,6 +33,7 @@ fn run(cfg: Config) -> Result<(), Box<dyn Error>> {
 struct Config {
     query: String,
     file_path: String,
+    ignore_case: bool,
 }
 
 impl Config {
@@ -38,6 +45,7 @@ impl Config {
         Ok(Self {
             query: args[1].clone(),
             file_path: args[2].clone(),
+            ignore_case: env::var("IGNORE_CASE").is_ok(),
         })
     }
 }
