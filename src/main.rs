@@ -1,3 +1,4 @@
+use minigrep::search;
 use std::{env, error::Error, fs, process};
 
 fn main() {
@@ -6,9 +7,6 @@ fn main() {
         println!("Problem parsing arguments: {err}");
         process::exit(1);
     });
-
-    println!("Searching for {}", cfg.query);
-    println!("In file {}", cfg.file_path);
 
     if let Err(err) = run(cfg) {
         println!("Application error: {err}");
@@ -19,7 +17,9 @@ fn main() {
 fn run(cfg: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(cfg.file_path)?;
 
-    println!("With text:\n{contents}");
+    for line in search(&cfg.query, &contents) {
+        println!("{line}");
+    }
 
     Ok(())
 }
