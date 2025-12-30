@@ -10,7 +10,10 @@ fn main() {
     println!("Searching for {}", cfg.query);
     println!("In file {}", cfg.file_path);
 
-    run(cfg);
+    if let Err(err) = run(cfg) {
+        println!("Application error: {err}");
+        process::exit(1);
+    }
 }
 
 fn run(cfg: Config) -> Result<(), Box<dyn Error>> {
