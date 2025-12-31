@@ -16,13 +16,13 @@ fn main() {
 fn run(cfg: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(cfg.file_path)?;
 
-    let res = if cfg.ignore_case {
-        search_case_insensitive(&cfg.query, &contents)
+    let lines: Box<dyn Iterator<Item = &str>> = if cfg.ignore_case {
+        Box::new(search_case_insensitive(&cfg.query, &contents))
     } else {
-        search(&cfg.query, &contents)
+        Box::new(search(&cfg.query, &contents))
     };
 
-    for line in res {
+    for line in lines {
         println!("{line}");
     }
 
